@@ -1,6 +1,8 @@
 package com.fineplay.fineplaybackend.auth.controller;
 
+import com.fineplay.fineplaybackend.auth.dto.request.SignInRequestDto;
 import com.fineplay.fineplaybackend.auth.dto.request.SignUpRequestDto;
+import com.fineplay.fineplaybackend.auth.dto.response.SignInResponseDto;
 import com.fineplay.fineplaybackend.auth.dto.response.SignUpResponseDto;
 import com.fineplay.fineplaybackend.auth.service.AuthService;
 import com.fineplay.fineplaybackend.dto.response.ErrorResponseDto;
@@ -56,5 +58,10 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
         }
         return authService.signUp(requestBody);
+    }
+
+    @PostMapping("/sign-in")
+    public ResponseEntity<? super SignInResponseDto> signIn(@RequestBody @Valid SignInRequestDto requestBody) {
+        return authService.signIn(requestBody);
     }
 }
