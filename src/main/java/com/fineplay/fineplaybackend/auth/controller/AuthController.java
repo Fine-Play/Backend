@@ -30,22 +30,6 @@ public class AuthController {
     @PostMapping("/sign-up")
     public ResponseEntity<? super SignUpResponseDto> signUp(@RequestBody @Valid SignUpRequestDto requestBody, BindingResult bindingResult) {
 
-//        if (bindingResult.hasErrors()) {
-//            StringBuilder sb = new StringBuilder();
-//            bindingResult.getAllErrors().forEach(objectError -> {
-//
-//                FieldError field = (FieldError) objectError;
-//                String message = field.getDefaultMessage();
-//                String fieldName = field.getField();
-//                String rejectedValue = (String) field.getRejectedValue();
-//
-//                sb.append("message:" + message + "\n");
-//                sb.append("field name:" + fieldName + "\n");
-//                sb.append("rejected value: " + rejectedValue + "\n");
-//            });
-//
-//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(sb.toString());
-//        }
         if (bindingResult.hasErrors()) {
             List<ErrorResponseDto.FieldError> errors = bindingResult.getFieldErrors().stream()
                     .map(error -> new ErrorResponseDto.FieldError(
