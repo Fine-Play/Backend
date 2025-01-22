@@ -24,7 +24,7 @@ public class SignUpRequestDto {
     private String password;
     @NotBlank @Email(message = "이메일 형식이 아닙니다.")
     private String email;
-    @NotBlank @Pattern(regexp="^[0-9]{11,13}$")
+    @NotBlank @Pattern(regexp="^[0-9]{11,13}$", message = "전화번호 형식이 아닙니다.")
     private String phoneNumber;
     @NotNull @Past
     private Date birth;
