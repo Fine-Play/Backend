@@ -45,4 +45,12 @@ public class UserEntity {
         this.boolcert3 = dto.getBoolcert3();
         this.boolcert4 = dto.getBoolcert4();
     }
+
+    public void setNickname(String nickname) {
+        this.nickName = nickname;
+    }
+
+    public void setPosition(String position) {
+        this.positon = position;
+    }
 }
