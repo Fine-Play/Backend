@@ -2,7 +2,11 @@ package com.fineplay.fineplaybackend.user.service.implement;
 
 import com.fineplay.fineplaybackend.auth.entity.UserEntity;
 import com.fineplay.fineplaybackend.dto.response.ResponseDto;
+import com.fineplay.fineplaybackend.user.dto.request.PatchNicknameRequestDto;
+import com.fineplay.fineplaybackend.user.dto.request.PatchPositionRequestDto;
 import com.fineplay.fineplaybackend.user.dto.response.GetSignInUserResponseDto;
+import com.fineplay.fineplaybackend.user.dto.response.PatchNicknameResponseDto;
+import com.fineplay.fineplaybackend.user.dto.response.PatchPositionResponseDto;
 import com.fineplay.fineplaybackend.user.service.UserService;
 import com.fineplay.fineplaybackend.auth.controller.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -23,10 +27,53 @@ public class UserServiceImplement implements UserService {
         try {
             userEntity = userRepository.findByEmail(email);
             if (userEntity == null) return GetSignInUserResponseDto.notExistUser();
+
         } catch (Exception ex) {
             ex.printStackTrace();
             return ResponseDto.databaseError();
         }
+
         return GetSignInUserResponseDto.success(userEntity);
+    }
+
+    @Override
+    public ResponseEntity<? super PatchNicknameResponseDto> patchNickname(PatchNicknameRequestDto dto, String email) {
+
+        try {
+            UserEntity userEntity = userRepository.findByEmail(email);
+            if (userEntity == null) return PatchNicknameResponseDto.notExistUser();
+
+            String nickname = dto.getNickName();
+            boolean existNickname = userRepository.existsByNickName(nickname);
+            if (existNickname) return PatchNicknameResponseDto.duplicateNickname();
+
+            userEntity.setNickname(nickname);
+            userRepository.save(userEntity);
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return ResponseDto.databaseError();
+        }
+
+        return PatchNicknameResponseDto.success();
+    }
+
+    @Override
+    public ResponseEntity<? super PatchPositionResponseDto> patchPosition(PatchPositionRequestDto dto, String email) {
+
+        try {
+            UserEntity userEntity = userRepository.findByEmail(email);
+            if (userEntity == null) return PatchPositionResponseDto.notExistUser();
+
+            String position = dto.getPosition();
+            userEntity.setPosition(position);
+            userRepository.save(userEntity);
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return ResponseDto.databaseError();
+        }
+
+        return PatchPositionResponseDto.success();
     }
 }
