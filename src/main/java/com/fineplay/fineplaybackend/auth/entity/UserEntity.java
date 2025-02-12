@@ -10,8 +10,10 @@ import java.util.Date;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Getter
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity(name="user")
@@ -26,7 +28,7 @@ public class UserEntity {
     private String password;
     private String phoneNumber;
     private Date birth;
-    private String positon;
+    private String position;
     private Boolean boolcert1;
     private Boolean boolcert2;
     private Boolean boolcert3;
@@ -39,7 +41,7 @@ public class UserEntity {
         this.password = dto.getPassword();
         this.phoneNumber = dto.getPhoneNumber();
         this.birth = dto.getBirth();
-        this.positon = dto.getPosition();
+        this.position = dto.getPosition();
         this.boolcert1 = dto.getBoolcert1();
         this.boolcert2 = dto.getBoolcert2();
         this.boolcert3 = dto.getBoolcert3();
@@ -51,6 +53,14 @@ public class UserEntity {
     }
 
     public void setPosition(String position) {
-        this.positon = position;
+        this.position = position;
     }
+    public void setPassword(String password) {
+        this.password = password; // ✅ 비밀번호 변경을 위한 Setter 추가
+    }
+
+    public void setBirth(Date birth) {
+        this.birth = birth; // ✅ 날짜 변경을 위한 Setter 추가
+    }
+
 }
