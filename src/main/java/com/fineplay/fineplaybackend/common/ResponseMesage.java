@@ -10,6 +10,7 @@ public interface ResponseMesage {
     String DUPLICATE_NICKNAME = "Duplicate nickname.";
     String DUPLICATE_PHONE_NUMBER = "Duplicate tel number.";
     String NOT_EXISTED_USER = "This user does not exist.";
+    String NOT_INITIALIZED = "Not initialized.";
 
     // HTTP Status 401
     String SIGN_IN_FAIL = "Login information mismatch.";
