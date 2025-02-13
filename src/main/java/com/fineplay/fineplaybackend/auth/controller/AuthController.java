@@ -1,7 +1,9 @@
 package com.fineplay.fineplaybackend.auth.controller;
 
+import com.fineplay.fineplaybackend.auth.dto.request.FindIdRequestDto;
 import com.fineplay.fineplaybackend.auth.dto.request.SignInRequestDto;
 import com.fineplay.fineplaybackend.auth.dto.request.SignUpRequestDto;
+import com.fineplay.fineplaybackend.auth.dto.response.FindIdResponseDto;
 import com.fineplay.fineplaybackend.auth.dto.response.SignInResponseDto;
 import com.fineplay.fineplaybackend.auth.dto.response.SignUpResponseDto;
 import com.fineplay.fineplaybackend.auth.service.AuthService;
@@ -48,4 +50,11 @@ public class AuthController {
     public ResponseEntity<? super SignInResponseDto> signIn(@RequestBody @Valid SignInRequestDto requestBody) {
         return authService.signIn(requestBody);
     }
+
+    // 아이디 찾기
+    @PostMapping("/find-id")
+    public ResponseEntity<? super FindIdResponseDto> findId(@RequestBody @Valid FindIdRequestDto requestBody) {
+        return authService.findId(requestBody);
+    }
+
 }

@@ -1,6 +1,8 @@
 package com.fineplay.fineplaybackend.auth.service.implement;
 
+import com.fineplay.fineplaybackend.auth.dto.request.FindIdRequestDto;
 import com.fineplay.fineplaybackend.auth.dto.request.SignInRequestDto;
+import com.fineplay.fineplaybackend.auth.dto.response.FindIdResponseDto;
 import com.fineplay.fineplaybackend.auth.dto.response.SignInResponseDto;
 import com.fineplay.fineplaybackend.auth.service.AuthService;
 import com.fineplay.fineplaybackend.auth.dto.request.SignUpRequestDto;
@@ -82,6 +84,25 @@ public class AuthServiceImplement implements AuthService {
             return ResponseDto.databaseError();
         }
         return SignInResponseDto.success(token);
+    }
+
+    @Override
+    public ResponseEntity<? super FindIdResponseDto> findId(FindIdRequestDto dto) {
+        try {
+            UserEntity userEntity = userRepository.findByRealNameAndPhoneNumberAndBirth(
+                    dto.getRealName(),
+                    dto.getPhoneNumber(),
+                    dto.getBirth()
+            );
+
+            if (userEntity == null) return FindIdResponseDto.notExistUser();
+
+            return FindIdResponseDto.success(userEntity.getEmail());
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return ResponseDto.databaseError();
+        }
     }
 
 }
