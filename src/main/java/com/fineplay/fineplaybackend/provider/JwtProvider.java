@@ -16,12 +16,15 @@ import org.springframework.stereotype.Component;
 @Component
 public class JwtProvider {
 
-    @Value("${secret-key}")
-    private String secretKey;
+    @Value("${secret-access-key}")
+    private String accessKey;
+
+    @Value("${secret-refresh-key")
+    private String refreshKey;
 
     // JWT 생성하는 메서드
-    public String createJwt(String email) {
-        Key key = Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8));
+    public String createAccessToken(String email) {
+        Key key = Keys.hmacShaKeyFor(accessKey.getBytes(StandardCharsets.UTF_8));
         Date expiredTime = Date.from(Instant.now().plus(1, ChronoUnit.HOURS)); // 1시간
         return Jwts.builder()
                 .signWith(key, SignatureAlgorithm.HS256)
@@ -35,7 +38,7 @@ public class JwtProvider {
     public String validateJwt(String token) {
 
         try {
-            Key key = Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8)); // 동적으로 생성
+            Key key = Keys.hmacShaKeyFor(accessKey.getBytes(StandardCharsets.UTF_8)); // 동적으로 생성
             Claims claims = Jwts.parserBuilder()
                     .setSigningKey(key) // token을 파싱
                     .build()

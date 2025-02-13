@@ -13,6 +13,7 @@ public interface ResponseMesage {
 
     // HTTP Status 401
     String SIGN_IN_FAIL = "Login information mismatch.";
+    String DECRYPT_FAIL = "Decrypt decode failed.";
     String AUTHORIZATION_FAIL = "Authorization failed.";
 
     // HTTP Status 403

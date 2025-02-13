@@ -75,7 +75,7 @@ public class AuthServiceImplement implements AuthService {
             if (!isMatched) return SignInResponseDto.signInFail();
 
             // 토큰 생성
-            token = jwtProvider.createJwt(email);
+            token = jwtProvider.createAccessToken(email);
 
         } catch (Exception ex) {
             ex.printStackTrace();
