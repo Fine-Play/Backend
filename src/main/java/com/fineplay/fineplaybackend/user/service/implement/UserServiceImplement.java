@@ -7,6 +7,7 @@ import com.fineplay.fineplaybackend.provider.JwtProvider;
 import com.fineplay.fineplaybackend.user.dto.request.PatchNicknameRequestDto;
 import com.fineplay.fineplaybackend.user.dto.request.PatchPositionRequestDto;
 import com.fineplay.fineplaybackend.user.dto.request.VerifyPasswordRequestDto;
+import com.fineplay.fineplaybackend.user.dto.response.DeleteUserResponseDto;
 import com.fineplay.fineplaybackend.user.dto.response.GetSignInUserResponseDto;
 import com.fineplay.fineplaybackend.user.dto.response.PatchNicknameResponseDto;
 import com.fineplay.fineplaybackend.user.dto.response.PatchPositionResponseDto;
@@ -106,8 +107,20 @@ public class UserServiceImplement implements UserService {
         return VerifyPasswordResponseDto.success();
     }
 
-//    @Override
-//    public ResponseEntity<?> deleteUser(String email) {
-//        return null;
-//    }
+    @Override
+    public ResponseEntity<? super DeleteUserResponseDto> deleteUser(String email) {
+        try {
+            UserEntity userEntity = userRepository.findByEmail(email);
+            if (userEntity == null) return DeleteUserResponseDto.notExistUser();
+
+            userRepository.delete(userEntity);
+//            jwtProvider.deleteRefreshToken(email);
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return ResponseDto.databaseError();
+        }
+
+        return DeleteUserResponseDto.success();
+    }
 }

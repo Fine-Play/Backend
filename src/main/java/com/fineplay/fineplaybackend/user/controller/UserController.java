@@ -3,6 +3,7 @@ package com.fineplay.fineplaybackend.user.controller;
 import com.fineplay.fineplaybackend.user.dto.request.PatchNicknameRequestDto;
 import com.fineplay.fineplaybackend.user.dto.request.PatchPositionRequestDto;
 import com.fineplay.fineplaybackend.user.dto.request.VerifyPasswordRequestDto;
+import com.fineplay.fineplaybackend.user.dto.response.DeleteUserResponseDto;
 import com.fineplay.fineplaybackend.user.dto.response.GetSignInUserResponseDto;
 import com.fineplay.fineplaybackend.user.dto.response.PatchNicknameResponseDto;
 import com.fineplay.fineplaybackend.user.dto.response.PatchPositionResponseDto;
@@ -61,10 +62,10 @@ public class UserController {
         return userService.verifyPassword(requestBody, email);
     }
 
-//    // 회원 탈퇴
-//    @DeleteMapping("/delete")
-//    public ResponseEntity<?> deleteUser(@AuthenticationPrincipal String email) {
-//        return userService.deleteUser(email);
-//    }
+    // 회원 탈퇴
+    @DeleteMapping("")
+    public ResponseEntity<? super DeleteUserResponseDto> deleteUser(@AuthenticationPrincipal String email) {
+        return userService.deleteUser(email);
+    }
 
 }
