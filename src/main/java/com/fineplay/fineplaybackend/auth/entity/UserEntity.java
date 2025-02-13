@@ -48,8 +48,8 @@ public class UserEntity {
         this.boolcert4 = dto.getBoolcert4();
     }
 
-    public void setNickname(String nickname) {
-        this.nickName = nickname;
+    public void setNickname(String nickName) {
+        this.nickName = nickName;
     }
 
     public void setPosition(String position) {
