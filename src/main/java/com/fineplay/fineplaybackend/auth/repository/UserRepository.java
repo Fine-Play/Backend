@@ -4,6 +4,8 @@ import com.fineplay.fineplaybackend.auth.entity.UserEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
 public interface UserRepository extends JpaRepository<UserEntity, Long> {
 
@@ -13,4 +15,5 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
 
     UserEntity findByEmail(String email); // email은 unique 이므로 1개 또는 0개가 무조건 반환됨
 
+    Optional<Object> findByUserId(Long userId);
 }
