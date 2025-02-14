@@ -53,4 +53,8 @@ public class UserEntity {
     public void setPosition(String position) {
         this.positon = position;
     }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
 }
