@@ -31,7 +31,7 @@ public class GetSignInUserResponseDto extends ResponseDto {
         this.realName = userEntity.getRealName();
         this.phoneNumber = userEntity.getPhoneNumber();
         this.birth = userEntity.getBirth();
-        this.positon = userEntity.getPositon();
+        this.positon = userEntity.getPosition();
         this.boolcert1 = userEntity.getBoolcert1();
         this.boolcert2 = userEntity.getBoolcert2();
         this.boolcert3 = userEntity.getBoolcert3();

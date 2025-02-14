@@ -1,8 +1,11 @@
 package com.fineplay.fineplaybackend.auth.repository;
 
 import com.fineplay.fineplaybackend.auth.entity.UserEntity;
+import java.util.Date;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 import java.util.Optional;
 
@@ -15,5 +18,12 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
 
     UserEntity findByEmail(String email); // email은 unique 이므로 1개 또는 0개가 무조건 반환됨
 
+    List<UserEntity> findByNickName(String nickName); // 회원검색 기능용
+
     Optional<Object> findByUserId(Long userId);
+
+    UserEntity findByRealNameAndPhoneNumberAndBirth(String realName, String phoneNumber, Date birth);
+
+    UserEntity findByRealNameAndEmailAndPhoneNumberAndBirth(String realName, String email, String phoneNumber, Date birth);
+
 }

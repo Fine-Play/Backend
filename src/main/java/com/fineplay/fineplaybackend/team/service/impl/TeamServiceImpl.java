@@ -174,7 +174,7 @@ public class TeamServiceImpl implements TeamService {
 
             return new TeamRegisterManageResponseDto(
                     user.getNickName(),
-                    user.getPositon(),
+                    user.getPosition(),
                     userStat != null ? userStat.getOVR() : "N/A",
                     user.getUserId()
             );
