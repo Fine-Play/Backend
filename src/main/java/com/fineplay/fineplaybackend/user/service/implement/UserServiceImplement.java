@@ -4,7 +4,7 @@ import com.fineplay.fineplaybackend.auth.entity.UserEntity;
 import com.fineplay.fineplaybackend.dto.response.ResponseDto;
 import com.fineplay.fineplaybackend.user.dto.response.GetSignInUserResponseDto;
 import com.fineplay.fineplaybackend.user.service.UserService;
-import com.fineplay.fineplaybackend.auth.controller.repository.UserRepository;
+import com.fineplay.fineplaybackend.auth.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.apache.coyote.Response;
 import org.springframework.http.ResponseEntity;

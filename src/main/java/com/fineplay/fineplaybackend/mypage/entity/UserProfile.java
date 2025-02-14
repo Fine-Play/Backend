@@ -18,6 +18,9 @@ public class UserProfile {
     @Column(name="User_ID", nullable = false)
     private Long userId;
 
+    @Column(name="user_Img")
+    private byte[] userImg;
+
     @Column(name="NickName", nullable = false)
     private String nickName;
 

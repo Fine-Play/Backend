@@ -1,4 +1,4 @@
-package com.fineplay.fineplaybackend.mypage.dto;
+package com.fineplay.fineplaybackend.mypage.dto.request;
 
 import lombok.*;
 

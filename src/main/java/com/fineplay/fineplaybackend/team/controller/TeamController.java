@@ -29,7 +29,7 @@ public class TeamController {
 
     private final TeamService teamService;
     private final JwtProvider jwtProvider;
-    private final com.fineplay.fineplaybackend.auth.controller.repository.UserRepository userRepository; // ✅ 유저 정보를 조회하기 위해 추가
+    private final com.fineplay.fineplaybackend.auth.repository.UserRepository userRepository; // ✅ 유저 정보를 조회하기 위해 추가
     private final TeamRepository teamRepository;
     /**
      * 팀 이름 중복 확인

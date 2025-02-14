@@ -1,10 +1,10 @@
 package com.fineplay.fineplaybackend.mypage.service.impl;
 
-import com.fineplay.fineplaybackend.mypage.dto.MypageProfileResponseDto;
-import com.fineplay.fineplaybackend.mypage.dto.SelectedStatRequestDto;
-import com.fineplay.fineplaybackend.mypage.dto.SelectedStatResponseDto;
-import com.fineplay.fineplaybackend.mypage.dto.PageMoveRequestDto;
-import com.fineplay.fineplaybackend.mypage.dto.PageMoveResponseDto;
+import com.fineplay.fineplaybackend.mypage.dto.response.MypageProfileResponseDto;
+import com.fineplay.fineplaybackend.mypage.dto.request.SelectedStatRequestDto;
+import com.fineplay.fineplaybackend.mypage.dto.response.SelectedStatResponseDto;
+import com.fineplay.fineplaybackend.mypage.dto.request.PageMoveRequestDto;
+import com.fineplay.fineplaybackend.mypage.dto.response.PageMoveResponseDto;
 import com.fineplay.fineplaybackend.mypage.entity.UserProfile;
 import com.fineplay.fineplaybackend.mypage.entity.UserStat;
 import com.fineplay.fineplaybackend.mypage.entity.UserStatVisualization;
@@ -37,7 +37,7 @@ public class MypageServiceImpl implements MypageService {
     public MypageProfileResponseDto getMypageProfile(Long userId) {
         Optional<UserProfile> profileOpt = userProfileRepository.findByUserId(userId);
         Optional<UserStat> statOpt = userStatRepository.findByUserId(userId);
-        Optional<UserStatVisualization> visOpt = Optional.ofNullable(userStatVisualizationRepository.findByUserId(userId));
+        Optional<UserStatVisualization> visOpt = userStatVisualizationRepository.findByUserId(userId);
 
         if (profileOpt.isEmpty() || statOpt.isEmpty()) {
             return MypageProfileResponseDto.builder()
@@ -109,6 +109,7 @@ public class MypageServiceImpl implements MypageService {
 
         return SelectedStatResponseDto.builder()
                 .status(200)
+                .stat(selectedStat)
                 .msg("stat update : " + selectedStat)
                 .build();
     }
@@ -116,7 +117,7 @@ public class MypageServiceImpl implements MypageService {
     @Override
     public PageMoveResponseDto movePage(String statName, PageMoveRequestDto requestDto) {
         Long userId = requestDto.getUserId();
-        Optional<UserStatVisualization> visOpt = Optional.ofNullable(userStatVisualizationRepository.findByUserId(userId));
+        Optional<UserStatVisualization> visOpt = userStatVisualizationRepository.findByUserId(userId);
 
         if (visOpt.isEmpty()) {
             return PageMoveResponseDto.builder()

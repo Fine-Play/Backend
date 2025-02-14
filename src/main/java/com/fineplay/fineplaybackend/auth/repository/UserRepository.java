@@ -1,4 +1,4 @@
-package com.fineplay.fineplaybackend.auth.controller.repository;
+package com.fineplay.fineplaybackend.auth.repository;
 
 import com.fineplay.fineplaybackend.auth.entity.UserEntity;
 import org.springframework.data.jpa.repository.JpaRepository;

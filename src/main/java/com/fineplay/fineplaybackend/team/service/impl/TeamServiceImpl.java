@@ -31,7 +31,7 @@ import java.util.ArrayList;
 public class TeamServiceImpl implements TeamService {
 
     private final TeamRepository teamRepository;
-    private final com.fineplay.fineplaybackend.auth.controller.repository.UserRepository userRepository;
+    private final com.fineplay.fineplaybackend.auth.repository.UserRepository userRepository;
     private final UserProfileRepository userProfileRepository;
     private final UserStatRepository userStatRepository;
     private final TeamJoinRequestRepository teamJoinRequestRepository;

@@ -13,7 +13,7 @@ import java.util.Date;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import jakarta.servlet.http.HttpServletRequest;
-import com.fineplay.fineplaybackend.auth.controller.repository.UserRepository;
+import com.fineplay.fineplaybackend.auth.repository.UserRepository;
 
 // JWT 발급을 위한 provider
 @Component
