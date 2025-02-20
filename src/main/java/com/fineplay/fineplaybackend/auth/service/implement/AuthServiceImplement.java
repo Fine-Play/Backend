@@ -84,7 +84,8 @@ public class AuthServiceImplement implements AuthService {
     @Override
     public ResponseEntity<? super SignInResponseDto> signIn(SignInRequestDto dto) {
 
-        String token = null;
+        String accessToken = null;
+        String refreshToken = null;
 
         try {
             // 유저 확인
@@ -98,13 +99,14 @@ public class AuthServiceImplement implements AuthService {
             if (!isMatched) return SignInResponseDto.signInFail();
 
             // 토큰 생성
-            token = jwtProvider.createAccessToken(email);
+            accessToken = jwtProvider.createAccessToken(email);
+            refreshToken = jwtProvider.createRefreshToken();
 
         } catch (Exception ex) {
             ex.printStackTrace();
             return ResponseDto.databaseError();
         }
-        return SignInResponseDto.success(token);
+        return SignInResponseDto.success(accessToken, refreshToken);
     }
 
     @Override

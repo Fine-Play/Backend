@@ -2,6 +2,7 @@ package com.fineplay.fineplaybackend.provider;
 
 import com.fineplay.fineplaybackend.auth.entity.UserEntity;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
@@ -22,7 +23,7 @@ public class JwtProvider {
     @Value("${secret-access-key}")
     private String accessKey;
 
-    @Value("${secret-refresh-key")
+    @Value("${secret-refresh-key}")
     private String refreshKey;
 
     private final UserRepository userRepository;
@@ -32,7 +33,7 @@ public class JwtProvider {
         this.userRepository = userRepository;
     }
 
-    // JWT 생성하는 메서드
+    // AccessToken 생성하는 메서드
     public String createAccessToken(String email) {
         Key key = Keys.hmacShaKeyFor(accessKey.getBytes(StandardCharsets.UTF_8));
         Date expiredTime = Date.from(Instant.now().plus(1, ChronoUnit.HOURS)); // 1시간
@@ -44,7 +45,18 @@ public class JwtProvider {
                 .compact();
     }
 
-    // JWT 검증 메서드
+    // RefreshToken 생성하는 메서드
+    public String createRefreshToken() {
+        Key key = Keys.hmacShaKeyFor(refreshKey.getBytes(StandardCharsets.UTF_8));
+        Date expiredTime = Date.from(Instant.now().plus(1, ChronoUnit.DAYS)); // 하루
+        return Jwts.builder()
+                .signWith(key, SignatureAlgorithm.HS256)
+                .setIssuedAt(new Date()) // 생성 시간
+                .setExpiration(expiredTime) // 만료 시간
+                .compact();
+    }
+
+    // JWT 검증 메서드 - 이메일을 가져올 수 있음
     public String validateJwt(String token) {
 
         try {
@@ -65,6 +77,23 @@ public class JwtProvider {
             throw new RuntimeException("Invalid JWT token", ex);
         }
     }
+
+    // JWT 검증 메서드
+    public String validateJwt(String token, boolean isRefresh) {
+        try {
+            Key key = isRefresh ? Keys.hmacShaKeyFor(refreshKey.getBytes(StandardCharsets.UTF_8))
+                    : Keys.hmacShaKeyFor(accessKey.getBytes(StandardCharsets.UTF_8));
+            Claims claims = Jwts.parserBuilder()
+                    .setSigningKey(key)
+                    .build()
+                    .parseClaimsJws(token)
+                    .getBody();
+            return claims.getSubject();
+        } catch (Exception ex) {
+            throw new RuntimeException("Invalid JWT token", ex);
+        }
+    }
+
 
     public String getTokenFromRequest(HttpServletRequest request) {
         String bearerToken = request.getHeader("Authorization");
