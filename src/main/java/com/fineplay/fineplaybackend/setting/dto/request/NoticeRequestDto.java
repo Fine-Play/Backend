@@ -5,7 +5,7 @@ import lombok.*;
 @Getter
 @Setter
 
-public class NoticeRequesDto {
+public class NoticeRequestDto {
 
     private String notice;
 
