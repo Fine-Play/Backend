@@ -19,9 +19,9 @@ public class SignInResponseDto extends ResponseDto {
     }
 
     // 성공
-    public static ResponseEntity<SignInResponseDto> success(String token) {
-        SignInResponseDto result = new SignInResponseDto(token);
-        return ResponseEntity.status(HttpStatus.OK).body(result);
+    public static ResponseEntity<SignInResponseDto> success(String accessToken, String refreshToken) {
+        SignInResponseDto result = new SignInResponseDto(accessToken);
+        return ResponseEntity.status(HttpStatus.OK).header("X-Refresh-Token", refreshToken).body(result);
     }
 
 
