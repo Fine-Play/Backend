@@ -13,7 +13,7 @@ import com.fineplay.fineplaybackend.auth.dto.request.SignUpRequestDto;
 import com.fineplay.fineplaybackend.dto.response.ResponseDto;
 import com.fineplay.fineplaybackend.auth.dto.response.SignUpResponseDto;
 import com.fineplay.fineplaybackend.auth.entity.UserEntity;
-import com.fineplay.fineplaybackend.auth.controller.repository.UserRepository;
+import com.fineplay.fineplaybackend.auth.repository.UserRepository;
 import com.fineplay.fineplaybackend.mypage.entity.UserProfile;
 import com.fineplay.fineplaybackend.mypage.repository.UserProfileRepository;
 import com.fineplay.fineplaybackend.provider.JwtProvider;
@@ -37,6 +37,7 @@ public class AuthServiceImplement implements AuthService {
 
     @Override
     public ResponseEntity<? super SignUpResponseDto> signUp(SignUpRequestDto dto) {
+
         try {
             // 이메일 중복 확인
             String email = dto.getEmail();

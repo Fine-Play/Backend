@@ -1,4 +1,4 @@
-package com.fineplay.fineplaybackend.mypage.dto;
+package com.fineplay.fineplaybackend.mypage.dto.response;
 
 import lombok.*;
 
@@ -9,5 +9,6 @@ import lombok.*;
 @Builder
 public class SelectedStatResponseDto {
     private int status;
+    private String stat;
     private String msg;
 }
