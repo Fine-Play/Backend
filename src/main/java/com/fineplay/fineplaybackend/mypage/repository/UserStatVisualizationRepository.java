@@ -8,3 +8,4 @@ import java.util.Optional;
 public interface UserStatVisualizationRepository extends JpaRepository<UserStatVisualization, Long> {
     Optional<UserStatVisualization> findByUserId(Long userId);
 }
+

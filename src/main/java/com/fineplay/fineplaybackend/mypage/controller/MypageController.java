@@ -1,5 +1,6 @@
 package com.fineplay.fineplaybackend.mypage.controller;
 
+import com.fineplay.fineplaybackend.mypage.dto.request.MypageProfileRequestDto;
 import com.fineplay.fineplaybackend.mypage.dto.response.MypageProfileResponseDto;
 import com.fineplay.fineplaybackend.mypage.dto.request.SelectedStatRequestDto;
 import com.fineplay.fineplaybackend.mypage.dto.response.SelectedStatResponseDto;
@@ -24,29 +25,38 @@ public class MypageController {
         this.jwtProvider = jwtProvider;
     }
 
-    // ✅ 1. 마이페이지 정보 조회 (JWT 검증 추가)
-    @GetMapping
-    public MypageProfileResponseDto getMypageProfile(HttpServletRequest request) {
-        Long userId = jwtProvider.getUserIdFromRequest(request); // JWT 검증 및 userId 추출
-        return mypageService.getMypageProfile(userId);
+    // ✅ 1. 마이페이지 정보 조회 (userId를 요청 Body에서 받음)
+    @PostMapping
+    public MypageProfileResponseDto getMypageProfile(HttpServletRequest request,
+                                                     @RequestBody MypageProfileRequestDto requestDto) {
+        validateToken(request); // JWT 유효성만 검증
+        return mypageService.getMypageProfile(requestDto.getUserId());
     }
 
-    // ✅ 2. 선택된 스탯 저장 (JWT 검증 추가)
+    // ✅ 2. 선택된 스탯 저장 (userId를 요청 Body에서 받음)
     @PostMapping("/selectedstat")
     public SelectedStatResponseDto updateSelectedStat(HttpServletRequest request,
                                                       @RequestBody SelectedStatRequestDto requestDto) {
-        Long userId = jwtProvider.getUserIdFromRequest(request);
-        requestDto.setUserId(userId); // 추출된 userId를 DTO에 설정
-        return mypageService.updateSelectedStat(requestDto);
+        validateToken(request);
+        Long tokenUserId = jwtProvider.getUserIdFromRequest(request);
+        return mypageService.updateSelectedStat(tokenUserId, requestDto);
     }
 
-    // ✅ 3. 특정 스탯 페이지 이동 (JWT 검증 추가)
+    // ✅ 3. 특정 스탯 페이지 이동 (userId를 요청 Body에서 받음)
     @PostMapping("/page/{stat_name}")
     public PageMoveResponseDto movePage(@PathVariable("stat_name") String statName,
                                         HttpServletRequest request,
                                         @RequestBody PageMoveRequestDto requestDto) {
-        Long userId = jwtProvider.getUserIdFromRequest(request);
-        requestDto.setUserId(userId);
+        validateToken(request);
         return mypageService.movePage(statName, requestDto);
+    }
+
+    // ✅ 기존 JwtProvider의 메서드를 활용하여 JWT 유효성만 검증
+    private void validateToken(HttpServletRequest request) {
+        String token = jwtProvider.getTokenFromRequest(request);
+        if (token == null) {
+            throw new RuntimeException("JWT Token not found in request");
+        }
+        jwtProvider.validateJwt(token); // ✅ JWT가 유효한지만 확인
     }
 }

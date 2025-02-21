@@ -8,6 +8,6 @@ import com.fineplay.fineplaybackend.mypage.dto.response.PageMoveResponseDto;
 
 public interface MypageService {
     MypageProfileResponseDto getMypageProfile(Long userId);
-    SelectedStatResponseDto updateSelectedStat(SelectedStatRequestDto requestDto);
+    SelectedStatResponseDto updateSelectedStat(Long tokenUserId,SelectedStatRequestDto requestDto);
     PageMoveResponseDto movePage(String statName, PageMoveRequestDto requestDto);
 }

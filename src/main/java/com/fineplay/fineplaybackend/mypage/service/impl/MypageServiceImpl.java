@@ -1,5 +1,7 @@
 package com.fineplay.fineplaybackend.mypage.service.impl;
 
+import com.fineplay.fineplaybackend.dto.response.ErrorResponseDto;
+import com.fineplay.fineplaybackend.dto.response.ResponseDto;
 import com.fineplay.fineplaybackend.mypage.dto.response.MypageProfileResponseDto;
 import com.fineplay.fineplaybackend.mypage.dto.request.SelectedStatRequestDto;
 import com.fineplay.fineplaybackend.mypage.dto.response.SelectedStatResponseDto;
@@ -13,9 +15,15 @@ import com.fineplay.fineplaybackend.mypage.repository.UserStatRepository;
 import com.fineplay.fineplaybackend.mypage.repository.UserStatVisualizationRepository;
 import com.fineplay.fineplaybackend.mypage.service.MypageService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class MypageServiceImpl implements MypageService {
@@ -33,16 +41,16 @@ public class MypageServiceImpl implements MypageService {
         this.userStatVisualizationRepository = userStatVisualizationRepository;
     }
 
+
+
+    // ✅ 마이페이지 프로필 조회
     @Override
     public MypageProfileResponseDto getMypageProfile(Long userId) {
         Optional<UserProfile> profileOpt = userProfileRepository.findByUserId(userId);
         Optional<UserStat> statOpt = userStatRepository.findByUserId(userId);
-        Optional<UserStatVisualization> visOpt = userStatVisualizationRepository.findByUserId(userId);
 
         if (profileOpt.isEmpty() || statOpt.isEmpty()) {
-            return MypageProfileResponseDto.builder()
-                    .status(404)
-                    .build();
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "INVALID_USER_ID");
         }
 
         UserProfile profile = profileOpt.get();
@@ -50,7 +58,7 @@ public class MypageServiceImpl implements MypageService {
 
         return MypageProfileResponseDto.builder()
                 .status(200)
-                .userName(profile.getNickName())  // ✅ Optional 사용 안하도록 수정
+                .userName(profile.getNickName())
                 .position(stat.getPosition())
                 .ovr(stat.getOVR())
                 .team1(String.valueOf(profile.getTeam1()))
@@ -78,7 +86,6 @@ public class MypageServiceImpl implements MypageService {
                 // Position Stats: DF
                 .TAC(stat.getTAC())
                 .BLD(stat.getBLD())
-                // 스탯 이미지 경로 (실제 구현에서는 Blob 데이터를 이미지 URL 혹은 Base64 문자열로 변환)
                 .CROImg("path/to/croImg")
                 .HEDImg("path/to/hedImg")
                 .FSTImg("path/to/fstImg")
@@ -90,23 +97,37 @@ public class MypageServiceImpl implements MypageService {
     }
 
     @Override
-    public SelectedStatResponseDto updateSelectedStat(SelectedStatRequestDto requestDto) {
+    public SelectedStatResponseDto updateSelectedStat(Long tokenUserId, SelectedStatRequestDto requestDto) {
         Long userId = requestDto.getUserId();
-        String selectedStat = requestDto.getSelectedStat();
 
-        // ✅ Optional 활용하여 null 체크
+        // ❌ 유효하지 않은 userId라면 예외 발생
         Optional<UserStat> userStatOptional = userStatRepository.findByUserId(userId);
         if (userStatOptional.isEmpty()) {
-            return SelectedStatResponseDto.builder()
-                    .status(404)
-                    .msg("User not found")
-                    .build();
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "INVALID_USER_ID");
         }
+
+        // ❌ 토큰을 통해 얻은ID와 다른 userId라면 예외 발생
+        if (!tokenUserId.equals(userId)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "INVALID_USER_ID_MISMATCH");
+        }
+
+        String selectedStat = requestDto.getSelectedStat().toUpperCase(); // ✅ 대소문자 무시
+
+        // ✅ 선택 가능한 스탯 목록
+        Set<String> validStats = Set.of("CRO", "HED", "FST", "ACT", "OFF", "TEC", "COP");
+
+        // ❌ 유효하지 않은 스탯 값이면 예외 발생
+        if (!validStats.contains(selectedStat)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "INVALID_SELECTED_STAT");
+        }
+
+        
 
         UserStat userStat = userStatOptional.get();
         userStat.setSelectedStat(selectedStat);
         userStatRepository.save(userStat);
 
+        // ✅ 정상적인 응답 반환
         return SelectedStatResponseDto.builder()
                 .status(200)
                 .stat(selectedStat)
@@ -119,40 +140,36 @@ public class MypageServiceImpl implements MypageService {
         Long userId = requestDto.getUserId();
         Optional<UserStatVisualization> visOpt = userStatVisualizationRepository.findByUserId(userId);
 
+        // ❌ 유효하지 않은 userId이면 예외 발생
         if (visOpt.isEmpty()) {
-            return PageMoveResponseDto.builder()
-                    .status(404)
-                    .msg("User not found")
-                    .img("path/to/defaultImg")
-                    .build();
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "INVALID_USER_ID");
         }
 
-        String imgPath;
-        switch (statName.toLowerCase()) {
-            case "pac":
-                imgPath = "path/to/PACImg";
-                break;
-            case "spd":
-                imgPath = "path/to/SPDImg";
-                break;
-            case "pas":
-                imgPath = "path/to/PASImg";
-                break;
-            case "dri":
-                imgPath = "path/to/DRIImg";
-                break;
-            case "dec":
-                imgPath = "path/to/DECImg";
-                break;
-            default:
-                imgPath = "path/to/defaultImg";
-                break;
+        // ✅ 선택 가능한 statName 목록
+        Map<String, String> statImageMap = Map.of(
+                "PAC", "path/to/PACImg",
+                "SPD", "path/to/SPDImg",
+                "PAS", "path/to/PASImg",
+                "SHO", "path/to/SHOImg",
+                "DRV", "path/to/DRVImg",
+                "DEC", "path/to/DECImg",
+                "DRI", "path/to/DRIImg",
+                "TAC", "path/to/TACImg",
+                "BLD", "path/to/BLDImg"
+        );
+
+        String upperStatName = statName.toUpperCase();
+
+        // ❌ 유효하지 않은 statName이면 예외 발생
+        if (!statImageMap.containsKey(upperStatName)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "INVALID_STAT_NAME");
         }
 
+        // ✅ 정상적인 응답 반환
         return PageMoveResponseDto.builder()
                 .status(200)
-                .msg("move page : skill")
-                .img(imgPath)
+                .msg("move page : " + upperStatName)
+                .img(statImageMap.get(upperStatName))
                 .build();
     }
 }
