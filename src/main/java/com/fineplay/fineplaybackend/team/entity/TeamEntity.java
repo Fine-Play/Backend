@@ -15,8 +15,7 @@ public class TeamEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    //@Column(name = "team_id", nullable = false, unique = true, columnDefinition = "INT(5) UNSIGNED ZEROFILL")
-
+    @Column(name = "team_id", nullable = false, unique = true, columnDefinition = "INT(5) UNSIGNED ZEROFILL")
     private Long teamId;
 
     @Column(nullable = false, unique = true)
