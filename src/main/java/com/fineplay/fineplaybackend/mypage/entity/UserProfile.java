@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Table(name = "User_Profile")
+@Table(name = "User_Profile_oldversion")
 @Getter
 @Setter
 @NoArgsConstructor

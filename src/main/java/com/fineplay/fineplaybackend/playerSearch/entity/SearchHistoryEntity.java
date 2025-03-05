@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 @Getter
 @NoArgsConstructor
 @Entity
-@Table(name = "search_history")
+@Table(name = "search_history_oldversion")
 public class SearchHistoryEntity {
 
     @Id

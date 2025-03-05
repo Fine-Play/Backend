@@ -5,7 +5,7 @@ import java.time.LocalDateTime;
 import lombok.*;
 
 @Entity
-@Table(name = "team")
+@Table(name = "teamt_oldversion")
 @Getter
 @Setter
 @NoArgsConstructor

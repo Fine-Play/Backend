@@ -14,8 +14,8 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity(name="user")
-@Table(name="user")
+@Entity(name="user_oldversion")
+@Table(name="user_oldversion")
 public class UserEntity {
 
     @Id @GeneratedValue(strategy=GenerationType.IDENTITY)
@@ -31,6 +31,9 @@ public class UserEntity {
     private Boolean boolcert2;
     private Boolean boolcert3;
     private Boolean boolcert4;
+    private String profileImg; // 필수 아님
+    private Long currentTeamId; // 필수 아님
+    private String selectedStat; // 필수 아님
 
     public UserEntity(SignUpRequestDto dto) {
         this.email = dto.getEmail();
@@ -53,12 +56,13 @@ public class UserEntity {
     public void setPosition(String position) {
         this.position = position;
     }
+
     public void setPassword(String password) {
-        this.password = password; // ✅ 비밀번호 변경을 위한 Setter 추가
+        this.password = password;
     }
 
     public void setBirth(Date birth) {
-        this.birth = birth; // ✅ 날짜 변경을 위한 Setter 추가
+        this.birth = birth;
     }
 
 }

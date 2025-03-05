@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Table(name = "User_StatVisualization")
+@Table(name = "User_StatVisualization_oldversion")
 @Getter
 @Setter
 @NoArgsConstructor

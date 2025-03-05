@@ -5,7 +5,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Table(name = "notice")
+@Table(name = "notice_oldversion")
 @Getter
 @Setter
 @NoArgsConstructor

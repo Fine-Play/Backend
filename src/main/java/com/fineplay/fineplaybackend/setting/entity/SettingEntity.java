@@ -11,7 +11,7 @@ import com.fineplay.fineplaybackend.auth.entity.UserEntity;
 @Setter
 @NoArgsConstructor
 @Entity
-@Table(name = "settings")  // 테이블 이름 지정
+@Table(name = "settings_oldversion")  // 테이블 이름 지정
 public class SettingEntity {
 
     @Id
