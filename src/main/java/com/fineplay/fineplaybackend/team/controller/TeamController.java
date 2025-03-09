@@ -1,72 +1,72 @@
-package com.fineplay.fineplaybackend.team.controller;
-
-import com.fineplay.fineplaybackend.provider.JwtProvider;
-import com.fineplay.fineplaybackend.team.dto.request.*;
-import com.fineplay.fineplaybackend.team.dto.response.*;
-import com.fineplay.fineplaybackend.team.repository.TeamJoinRequestRepository;
-import com.fineplay.fineplaybackend.team.repository.TeamRepository;
-import com.fineplay.fineplaybackend.team.service.TeamService;
-import com.fineplay.fineplaybackend.auth.entity.UserEntity;
-import com.fineplay.fineplaybackend.auth.repository.UserRepository;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.validation.Valid;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
-import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-import java.util.stream.Collectors;
-
-@RestController
-@RequestMapping("/api/team")
-@RequiredArgsConstructor
-public class TeamController {
+//package com.fineplay.fineplaybackend.team.controller;
+//
+//import com.fineplay.fineplaybackend.provider.JwtProvider;
+//import com.fineplay.fineplaybackend.team.dto.request.*;
+//import com.fineplay.fineplaybackend.team.dto.response.*;
+////import com.fineplay.fineplaybackend.team.repository.TeamJoinRequestRepository;
+//import com.fineplay.fineplaybackend.team.repository.TeamRepository;
+//import com.fineplay.fineplaybackend.team.service.TeamService;
+//import com.fineplay.fineplaybackend.auth.entity.UserEntity;
+//import com.fineplay.fineplaybackend.auth.repository.UserRepository;
+//import jakarta.servlet.http.HttpServletRequest;
+//import jakarta.validation.Valid;
+//import lombok.AllArgsConstructor;
+//import lombok.Getter;
+//import lombok.RequiredArgsConstructor;
+//import lombok.Setter;
+//import org.springframework.http.ResponseEntity;
+//import org.springframework.validation.BindingResult;
+//import org.springframework.validation.FieldError;
+//import org.springframework.web.bind.annotation.*;
+//
+//import java.util.List;
+//import java.util.stream.Collectors;
+//
+//@RestController
+//@RequestMapping("/api/team")
+//@RequiredArgsConstructor
+//public class TeamController {
 
 //    private final TeamService teamService;
-    private final JwtProvider jwtProvider;
-    private final UserRepository userRepository;
-    private final TeamRepository teamRepository;
-    private final TeamJoinRequestRepository teamJoinRequestRepository;
+//    private final JwtProvider jwtProvider;
+//    private final UserRepository userRepository;
+//    private final TeamRepository teamRepository;
+//    private final TeamJoinRequestRepository teamJoinRequestRepository;
 
     /**
      * JWT 토큰 검증 공통 메서드 (모든 API에서 사용)
      */
-    private String validateJwt(HttpServletRequest request) {
-        String token = jwtProvider.getTokenFromRequest(request);
-        if (token == null) {
-            throw new IllegalArgumentException("JWT 검증 실패: 토큰이 없습니다.");
-        }
-        String email = jwtProvider.validateJwt(token);
-        if (email == null) {
-            throw new IllegalArgumentException("JWT 검증 실패: 유효하지 않은 토큰입니다.");
-        }
-        return email;
-    }
+//    private String validateJwt(HttpServletRequest request) {
+//        String token = jwtProvider.getTokenFromRequest(request);
+//        if (token == null) {
+//            throw new IllegalArgumentException("JWT 검증 실패: 토큰이 없습니다.");
+//        }
+//        String email = jwtProvider.validateJwt(token);
+//        if (email == null) {
+//            throw new IllegalArgumentException("JWT 검증 실패: 유효하지 않은 토큰입니다.");
+//        }
+//        return email;
+//    }
 
     /**
      * 팀 이름 중복 확인 (JWT 인증 필수)
      * GET /api/team/nameDuplicate?TeamName=팀명
      */
-    @GetMapping("/nameDuplicate")
-    public ResponseEntity<?> checkTeamNameDuplicate(HttpServletRequest request, @RequestParam("TeamName") String teamName) {
-        try {
-            validateJwt(request);
-            boolean available = !teamRepository.existsByTeamName(teamName);
-            if (!available) {
-                return ResponseEntity.status(409)
-                        .body(new ApiResponse<>(409, "중복된 팀 이름", new TeamNameDuplicateResponseDto(false, null)));
-            }
-            return ResponseEntity.ok(new ApiResponse<>(200, "사용 가능한 팀 이름", new TeamNameDuplicateResponseDto(true, null)));
-        } catch (Exception e) {
-            return ResponseEntity.status(401)
-                    .body(new ApiResponse<>(401, e.getMessage(), null));
-        }
-    }
+//    @GetMapping("/nameDuplicate")
+//    public ResponseEntity<?> checkTeamNameDuplicate(HttpServletRequest request, @RequestParam("TeamName") String teamName) {
+//        try {
+//            validateJwt(request);
+//            boolean available = !teamRepository.existsByTeamName(teamName);
+//            if (!available) {
+//                return ResponseEntity.status(409)
+//                        .body(new ApiResponse<>(409, "중복된 팀 이름", new TeamNameDuplicateResponseDto(false, null)));
+//            }
+//            return ResponseEntity.ok(new ApiResponse<>(200, "사용 가능한 팀 이름", new TeamNameDuplicateResponseDto(true, null)));
+//        } catch (Exception e) {
+//            return ResponseEntity.status(401)
+//                    .body(new ApiResponse<>(401, e.getMessage(), null));
+//        }
+//    }
 
     /**
      * 팀 생성 (JWT 인증 필수)
@@ -386,25 +386,25 @@ public class TeamController {
 //            return ResponseEntity.status(500).body(new ApiResponse<>(500, "서버 내부 오류", null));
 //        }
 //    }
-
-
-
-
-
-
-    @Getter
-    @Setter
-    @AllArgsConstructor
-    private static class ApiResponse<T> {
-        private int code;
-        private String message;
-        private T data;
-    }
-
-    @Getter
-    @Setter
-    @AllArgsConstructor
-    public class ErrCode {
-        private String errCode;
-    }
-}
+//
+//
+//
+//
+//
+//
+//    @Getter
+//    @Setter
+//    @AllArgsConstructor
+//    private static class ApiResponse<T> {
+//        private int code;
+//        private String message;
+//        private T data;
+//    }
+//
+//    @Getter
+//    @Setter
+//    @AllArgsConstructor
+//    public class ErrCode {
+//        private String errCode;
+//    }
+//}

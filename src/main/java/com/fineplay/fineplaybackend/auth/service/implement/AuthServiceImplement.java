@@ -14,8 +14,8 @@ import com.fineplay.fineplaybackend.dto.response.ResponseDto;
 import com.fineplay.fineplaybackend.auth.dto.response.SignUpResponseDto;
 import com.fineplay.fineplaybackend.auth.entity.UserEntity;
 import com.fineplay.fineplaybackend.auth.repository.UserRepository;
-import com.fineplay.fineplaybackend.mypage.entity.UserProfile;
-import com.fineplay.fineplaybackend.mypage.repository.UserProfileRepository;
+//import com.fineplay.fineplaybackend.mypage.entity.UserProfile;
+//import com.fineplay.fineplaybackend.mypage.repository.UserProfileRepository;
 import com.fineplay.fineplaybackend.provider.JwtProvider;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -31,7 +31,7 @@ public class AuthServiceImplement implements AuthService {
 
     private final UserRepository userRepository;
     private final JwtProvider jwtProvider;
-    private final UserProfileRepository userProfileRepository;
+//    private final UserProfileRepository userProfileRepository;
 
     private PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
@@ -59,21 +59,19 @@ public class AuthServiceImplement implements AuthService {
             String encodedPassword = passwordEncoder.encode(password);
             dto.setPassword(encodedPassword);
 
-            // ✅ UserEntity 저장
             UserEntity userEntity = new UserEntity(dto);
             userRepository.save(userEntity);
 
-            // ✅ UserProfile 자동 생성 (회원가입 후)
-            UserProfile userProfile = UserProfile.builder()
-                    .userId(userEntity.getUserId())  // 자동 생성된 userId 가져오기
-                    .nickName(userEntity.getNickName()) // 닉네임 설정
-                    .team1(null)  // 기본적으로 팀 없음
-                    .team2(null)
-                    .team3(null)
-                    .selectedTeam(null)
-                    .build();
-            userProfileRepository.save(userProfile);  // `UserProfile` 저장
-
+//            // ✅ UserProfile 자동 생성 (회원가입 후)
+//            UserProfile userProfile = UserProfile.builder()
+//                    .userId(userEntity.getUserId())  // 자동 생성된 userId 가져오기
+//                    .nickName(userEntity.getNickName()) // 닉네임 설정
+//                    .team1(null)  // 기본적으로 팀 없음
+//                    .team2(null)
+//                    .team3(null)
+//                    .selectedTeam(null)
+//                    .build();
+//            userProfileRepository.save(userProfile);  // `UserProfile` 저장
         } catch (Exception ex) {
             ex.printStackTrace();
             return ResponseDto.databaseError();

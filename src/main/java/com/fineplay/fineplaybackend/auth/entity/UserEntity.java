@@ -1,12 +1,24 @@
 package com.fineplay.fineplaybackend.auth.entity;
 
 import com.fineplay.fineplaybackend.auth.dto.request.SignUpRequestDto;
+import com.fineplay.fineplaybackend.team.entity.TeamEntity;
+import com.fineplay.fineplaybackend.team.entity.TeamRequestListEntity;
+import com.fineplay.fineplaybackend.team.entity.TeamStatEntity;
+import com.fineplay.fineplaybackend.user.entity.UserStatEntity;
+import com.fineplay.fineplaybackend.user.entity.UserStatImgEntity;
+import com.fineplay.fineplaybackend.user.entity.UserTeamEntity;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotNull;
 import java.util.Date;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -20,18 +32,57 @@ public class UserEntity {
 
     @Id @GeneratedValue(strategy=GenerationType.IDENTITY)
     private Long userId;
+
+    @Column(unique = true) @NotNull
     private String email;
+
+//    @NotNull -> 나중에 주석 풀어줘야 해
     private String password;
+
+    @NotNull
     private String realName;
+
+    @Column(unique = true) @NotNull
     private String nickName;
+
+    @NotNull
     private Date birth;
+
+    @Column(unique = true) @NotNull
     private String phoneNumber;
+
+    @NotNull
     private Boolean boolcert1;
+
+    @NotNull
     private Boolean boolcert2;
+
+    @NotNull
     private Boolean boolcert3;
+
+    @NotNull
     private Boolean boolcert4;
+
+    @NotNull
     private String position;
+
     private String profileImg; // 필수 아님
+
+    // 사용자가 삭제되어도 팀은 삭제되지 않음 왜? 위임해줘야 하니까
+    @OneToMany(mappedBy = "teamLeader", cascade = CascadeType.ALL, orphanRemoval = false)
+    private List<TeamEntity> teams;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<TeamRequestListEntity> userRequests;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<UserTeamEntity> userTeams;
+
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private UserStatEntity userStat;
+
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private UserStatImgEntity userStatImg;
 
     public UserEntity(SignUpRequestDto dto) {
         this.email = dto.getEmail();

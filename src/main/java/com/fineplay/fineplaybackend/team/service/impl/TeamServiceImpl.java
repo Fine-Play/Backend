@@ -1,10 +1,10 @@
 //package com.fineplay.fineplaybackend.team.service.impl;
 //
 //import com.fineplay.fineplaybackend.auth.entity.UserEntity;
-//import com.fineplay.fineplaybackend.mypage.entity.UserStat;
+//import com.fineplay.fineplaybackend.mypage.entity.UserStats;
 //import com.fineplay.fineplaybackend.mypage.repository.UserProfileRepository;
 //import com.fineplay.fineplaybackend.mypage.entity.UserProfile;
-//import com.fineplay.fineplaybackend.mypage.repository.UserStatRepository;
+//import com.fineplay.fineplaybackend.mypage.repository.UserStatsRepository;
 //import com.fineplay.fineplaybackend.team.dto.request.CreateTeamRequestDto;
 //import com.fineplay.fineplaybackend.team.dto.request.TeamUpdateRequestDto;
 //import com.fineplay.fineplaybackend.team.dto.response.*;
@@ -34,7 +34,7 @@
 //    private final TeamRepository teamRepository;
 //    private final com.fineplay.fineplaybackend.auth.repository.UserRepository userRepository;
 //    private final UserProfileRepository userProfileRepository;
-//    private final UserStatRepository userStatRepository;
+//    private final UserStatsRepository userStatsRepository;
 //    private final TeamJoinRequestRepository teamJoinRequestRepository;
 //
 //    @Override
@@ -181,12 +181,12 @@
 //                throw new RuntimeException("사용자를 찾을 수 없습니다.");
 //            }
 //            UserEntity user = userList.get(0);
-//            UserStat userStat = userStatRepository.findByUserId(userId).orElse(null);
+//            UserStats userStats = userStatsRepository.findByUserId(userId).orElse(null);
 //
 //            return new TeamRegisterManageResponseDto(
 //                    user.getNickName(),
 //                    user.getPosition(),
-//                    userStat != null ? userStat.getOVR() : "N/A",
+//                    userStats != null ? userStats.getOVR() : "N/A",
 //                    user.getUserId()
 //            );
 //        }).collect(Collectors.toList());
@@ -272,14 +272,14 @@
 //            UserEntity user = userRepository.findById(userId)
 //                    .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
 //
-//            // ✅ 유저 스탯 가져오기 (UserStat)
-//            UserStat userStat = userStatRepository.findByUserId(userId).orElse(null);
+//            // ✅ 유저 스탯 가져오기 (UserStats)
+//            UserStats userStats = userStatsRepository.findByUserId(userId).orElse(null);
 //
 //            return new TeamMemberListResponseDto(
 //                    userId,
 //                    isLeader,
 //                    user.getNickName(),
-//                    userStat != null ? userStat.getOVR() : "N/A"
+//                    userStats != null ? userStats.getOVR() : "N/A"
 //            );
 //        }).collect(Collectors.toList());
 //    }
