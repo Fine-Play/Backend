@@ -13,8 +13,10 @@ import org.hibernate.annotations.OnDeleteAction;
 @Entity(name = "team")
 @Table(name = "team")
 @Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class TeamEntity {
 
     @Id @GeneratedValue(strategy=GenerationType.IDENTITY)
@@ -43,13 +45,4 @@ public class TeamEntity {
     private List<UserTeamEntity> userTeams;
 
 
-    public TeamEntity(String teamName, String homeTown1, String homeTown2, String sports, boolean autoAccept, Long creator_user_id) {
-        this.teamName = teamName;
-//        this.homeTown1 = homeTown1;
-//        this.homeTown2 = homeTown2;
-//        this.sports = sports;
-//        this.autoAccept = autoAccept;
-//        this.creator_user_id = creator_user_id;
-//        this.createdDate = LocalDateTime.now();
-    }
 }

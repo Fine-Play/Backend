@@ -14,6 +14,6 @@ import lombok.Setter;
 @AllArgsConstructor
 @Embeddable
 public class UserTeamId implements Serializable {
-    private int userId;
-    private int teamId;
+    private Long userId;
+    private Long teamId;
 }
