@@ -51,4 +51,5 @@ public class MypageProfileResponseDto {
     private String OFFImg;
     private String TECImg;
     private String COPImg;
+    private String ProfileImg;
 }

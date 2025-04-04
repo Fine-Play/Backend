@@ -16,5 +16,9 @@ public interface TeamRepository extends JpaRepository<TeamEntity, Long> {
 
     List<TeamEntity> findByTeamNameContaining(String searchContent);
 
+
+    Optional<TeamEntity> findByTeamId(Long teamId);
+
     void deleteByTeamId(Long teamId);
+
 }

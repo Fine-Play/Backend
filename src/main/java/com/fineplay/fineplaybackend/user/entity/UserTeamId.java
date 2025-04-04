@@ -15,5 +15,7 @@ import lombok.Setter;
 @Embeddable
 public class UserTeamId implements Serializable {
     private Long userId;
-    private Long teamId;
+
+    private Long teamId;  //둘다 int-> long으로 변경
+
 }

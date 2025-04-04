@@ -9,6 +9,7 @@ import java.util.List;
 
 @Repository
 public interface UserTeamRepository extends JpaRepository<UserTeamEntity, UserTeamId> {
+
     boolean existsByUserIdAndTeamId(Long userId, Long teamId);
 
     List<UserTeamEntity> findAllByTeamId(Long teamId);
@@ -17,6 +18,7 @@ public interface UserTeamRepository extends JpaRepository<UserTeamEntity, UserTe
 
     int countByUserId(Long userId);
     int countByTeamId(Long TeamId);
+
 
 
     List<UserTeamEntity> findAllByUserId(Long userId);
