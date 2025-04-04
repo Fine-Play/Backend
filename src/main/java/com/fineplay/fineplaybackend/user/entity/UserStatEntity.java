@@ -83,6 +83,7 @@ public class UserStatEntity {
     @Column(columnDefinition = "INT DEFAULT 0")
     private int OVR;
 
+    @Column(columnDefinition = "VARCHAR(255) DEFAULT 'CRO'")
     private String selectedStat;
 
     public UserStatEntity(UserEntity user) {
@@ -104,7 +105,10 @@ public class UserStatEntity {
         this.TEC = 0;
         this.COP = 0;
         this.OVR = 0;
+
         //this.selectedStat = "CRO";
+
+
     }
 
 }

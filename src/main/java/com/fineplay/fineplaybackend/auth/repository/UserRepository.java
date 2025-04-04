@@ -21,7 +21,7 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
     List<UserEntity> findByNickName(String nickName); // 회원검색 기능용
 
     Optional<UserEntity> findByUserId(Long userId);
-    
+
     UserEntity findByRealNameAndPhoneNumberAndBirth(String realName, String phoneNumber, Date birth);
 
     UserEntity findByRealNameAndEmailAndPhoneNumberAndBirth(String realName, String email, String phoneNumber, Date birth);
