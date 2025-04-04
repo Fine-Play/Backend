@@ -14,8 +14,10 @@ import com.fineplay.fineplaybackend.user.entity.UserStatEntity;
 import com.fineplay.fineplaybackend.user.entity.UserTeamEntity;
 import com.fineplay.fineplaybackend.user.repository.UserTeamRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -44,15 +46,13 @@ public class TeamServiceImpl implements TeamService {
     @Transactional
     public TeamCreationResponseDto createTeam(CreateTeamRequestDto requestDto, Long userId) {
         if (userId == null) {
-            throw new RuntimeException("🚨 오류: userId가 null입니다. JWT에서 올바른 값이 전달되지 않았는지 확인하세요.");
-        }
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "USER_ID_NULL");        }
         // 팀 이름 중복 확인
         if (teamRepository.existsByTeamName(requestDto.getTeamName())) {
-            return new TeamCreationResponseDto("DUPLICATE_TEAM_NAME");
-        }
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "DUPLICATE_TEAM_NAME");        }
         // 팀 리더(UserEntity) 조회
         UserEntity leader = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("팀 생성 시 리더를 찾을 수 없습니다."));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "USER_NOT_FOUND"));
         // 팀 생성 및 저장
         TeamEntity team = new TeamEntity();
         team.setTeamName(requestDto.getTeamName());
@@ -66,7 +66,7 @@ public class TeamServiceImpl implements TeamService {
         // 이중 검증: 사용자의 현재 가입 건수 확인 (최대 3개)
         int currentTeamCount = userTeamRepository.countByUserId(userId);
         if (currentTeamCount >= 3) {
-            throw new RuntimeException("최대 3개의 팀만 가입할 수 있습니다.");
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "USER_ALREADY_IN_MAX_TEAMS");
         }
         // 리더의 팀 가입 정보 추가 (isCurrent는 true로 설정)
         UserTeamEntity leaderTeam = UserTeamEntity.builder()
@@ -74,8 +74,9 @@ public class TeamServiceImpl implements TeamService {
                 .teamId(createdTeamId)
                 .user(leader)
                 .team(team)
-                .isCurrent(true)
+                .isCurrent(userTeamRepository.findAllByUserId(userId).isEmpty())
                 .build();
+
         userTeamRepository.save(leaderTeam);
         int teamMemberNum=userTeamRepository.countByTeamId(createdTeamId);
         team.setMemberNum(teamMemberNum);
@@ -115,20 +116,20 @@ public class TeamServiceImpl implements TeamService {
     @Transactional
     public String requestJoinTeam(Long userId, Long teamId) {
         // 팀과 사용자 존재 여부 확인
-        if (!teamRepository.existsById(teamId)) return "TEAM_NOT_FOUND";
-        if (!userRepository.existsById(userId)) return "USER_NOT_FOUND";
+        if (!teamRepository.existsById(teamId)) {throw new ResponseStatusException(HttpStatus.NOT_FOUND, "TEAM_NOT_FOUND");}
+        if (!userRepository.existsById(userId)) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "USER_NOT_FOUND");
+        }
         // 가입 요청 중복 체크
-        if (TeamRequestListRepository.existsByTeam_TeamIdAndUser_UserId(teamId, userId)) {
-            return "ALREADY_REQUESTED";
+        if (TeamRequestListRepository.existsByTeam_TeamIdAndUser_UserId(teamId, userId)){
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "ALREADY_REQUESTED");
         }
         // 이미 가입한 팀 여부 확인
-        if (userTeamRepository.existsByUserIdAndTeamId(userId, teamId)) {
-            return "ALREADY_IN_TEAM";
-        }
+        if (userTeamRepository.existsByUserIdAndTeamId(userId, teamId))  throw new ResponseStatusException(HttpStatus.CONFLICT, "ALREADY_IN_TEAM");
         UserEntity user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "USER_NOT_FOUND"));
         TeamEntity team = teamRepository.findById(teamId)
-                .orElseThrow(() -> new RuntimeException("팀을 찾을 수 없습니다."));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "TEAM_NOT_FOUND"));
         // 가입 요청 저장
         TeamRequestListEntity joinRequest = new TeamRequestListEntity(null, user, team);
         TeamRequestListRepository.save(joinRequest);
@@ -142,15 +143,15 @@ public class TeamServiceImpl implements TeamService {
     @Transactional(readOnly = true)
     public List<TeamRegisterManageResponseDto> getTeamJoinRequests(Long teamId, Long leaderId) {
         TeamEntity team = teamRepository.findById(teamId)
-                .orElseThrow(() -> new RuntimeException("팀을 찾을 수 없습니다."));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "TEAM_NOT_FOUND"));
         if (team.getTeamLeader() == null || !team.getTeamLeader().getUserId().equals(leaderId)) {
-            throw new RuntimeException("팀장이 아닙니다.");
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "NOT_TEAM_LEADER");
         }
         List<TeamRequestListEntity> joinRequests = TeamRequestListRepository.findByTeam_TeamId(teamId);
         return joinRequests.stream().map(request -> {
             Long reqUserId = request.getUser().getUserId();
             UserEntity user = userRepository.findById(reqUserId)
-                    .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "USER_NOT_FOUND"));
             UserStatEntity stat = null;
             try {
                 stat = /* userStatRepository.findByUserId(reqUserId).orElse(null) */ null; // 필요 시 통계 조회 로직 추가
@@ -173,20 +174,20 @@ public class TeamServiceImpl implements TeamService {
     @Transactional
     public String acceptJoinRequest(Long teamId, Long userId, Long leaderId) {
         TeamEntity team = teamRepository.findById(teamId)
-                .orElseThrow(() -> new RuntimeException("TEAM_NOT_FOUND"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "TEAM_NOT_FOUND"));
         if (team.getTeamLeader() == null || !team.getTeamLeader().getUserId().equals(leaderId))
-            return "NOT_TEAM_LEADER";
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "NOT_TEAM_LEADER");
         if (!TeamRequestListRepository.existsByTeam_TeamIdAndUser_UserId(teamId, userId)) {
-            return "NO_JOIN_REQUEST";
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "NO_JOIN_REQUEST");
         }
         // 이중 검증: 사용자의 현재 가입 건수 확인 (최대 3개)
         int currentTeamCount = userTeamRepository.countByUserId(userId);
         if (currentTeamCount >= 3) {
-            return "USER_ALREADY_IN_MAX_TEAMS";
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "USER_ALREADY_IN_MAX_TEAMS");
         }
         // 가입 정보 추가
         UserEntity user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("USER_NOT_FOUND"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "USER_NOT_FOUND"));
         UserTeamEntity membership = UserTeamEntity.builder()
                 .userId(userId)
                 .teamId(teamId)
@@ -209,11 +210,12 @@ public class TeamServiceImpl implements TeamService {
     @Transactional
     public String rejectJoinRequest(Long teamId, Long userId, Long leaderId) {
         TeamEntity team = teamRepository.findById(teamId)
-                .orElseThrow(() -> new RuntimeException("TEAM_NOT_FOUND"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "TEAM_NOT_FOUND"));
         if (team.getTeamLeader() == null || !team.getTeamLeader().getUserId().equals(leaderId))
-            return "NOT_TEAM_LEADER";
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "NOT_TEAM_LEADER");
         if (!TeamRequestListRepository.existsByTeam_TeamIdAndUser_UserId(teamId, userId)) {
-            return "NO_JOIN_REQUEST";
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "NO_JOIN_REQUEST");
+
         }
         TeamRequestListRepository.deleteByTeam_TeamIdAndUser_UserId(teamId, userId);
         return "JOIN_REJECTED";
@@ -226,14 +228,14 @@ public class TeamServiceImpl implements TeamService {
     @Transactional(readOnly = true)
     public List<TeamMemberListResponseDto> getTeamMembers(Long teamId) {
         TeamEntity team = teamRepository.findById(teamId)
-                .orElseThrow(() -> new RuntimeException("팀을 찾을 수 없습니다."));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "TEAM_NOT_FOUND"));
         Long leaderId = team.getTeamLeader() != null ? team.getTeamLeader().getUserId() : null;
         List<UserTeamEntity> memberships = userTeamRepository.findAllByTeamId(teamId);
         return memberships.stream().map(ut -> {
             Long uid = ut.getUserId();
             boolean isLeader = uid.equals(leaderId);
             UserEntity user = userRepository.findById(uid)
-                    .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "USER_NOT_FOUND"));
             UserStatEntity stat = null;
             try {
                 stat = /* userStatRepository.findByUserId(uid).orElse(null) */ null; // 통계 조회 로직 추가 가능
@@ -254,13 +256,13 @@ public class TeamServiceImpl implements TeamService {
     @Transactional
     public String updateTeamInfo(TeamUpdateRequestDto updateDto, Long leaderId) {
         TeamEntity team = teamRepository.findById(Long.valueOf(updateDto.getTeamID()))
-                .orElseThrow(() -> new RuntimeException("TEAM_NOT_FOUND"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "TEAM_NOT_FOUND"));
         if (team.getTeamLeader() == null || !team.getTeamLeader().getUserId().equals(leaderId)) {
-            return "NOT_TEAM_LEADER";
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "NOT_TEAM_LEADER");
         }
         if (!team.getTeamName().equals(updateDto.getTeamName()) &&
                 teamRepository.existsByTeamName(updateDto.getTeamName())) {
-            return "DUPLICATE_TEAM_NAME";
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "DUPLICATE_TEAM_NAME");
         }
         team.setTeamName(updateDto.getTeamName());
         team.setRegion(updateDto.getHomeTown1()+" "+updateDto.getHomeTown2());
@@ -275,9 +277,10 @@ public class TeamServiceImpl implements TeamService {
     @Transactional
     public String leaveTeam(Long teamId, Long userId) {
         TeamEntity team = teamRepository.findById(teamId)
-                .orElseThrow(() -> new RuntimeException("TEAM_NOT_FOUND"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "TEAM_NOT_FOUND"));
+
         if (!userTeamRepository.existsByUserIdAndTeamId(userId, teamId)) {
-            return "USER_NOT_IN_TEAM";
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "USER_NOT_IN_TEAM");
         }
         // 팀 리더인 경우, 다른 구성원이 있다면 새 리더 위임
         if (userId.equals(team.getTeamLeader().getUserId())) {
@@ -287,7 +290,7 @@ public class TeamServiceImpl implements TeamService {
                     .findFirst();
             if (newLeaderOpt.isPresent()) {
                 UserEntity newLeader = userRepository.findById(newLeaderOpt.get().getUserId())
-                        .orElseThrow(() -> new RuntimeException("새 팀 리더를 찾을 수 없습니다."));
+                        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "NEW_LEADER_NOT_FOUND"));
                 team.setTeamLeader(newLeader);
             } else {
                 userTeamRepository.deleteByUserIdAndTeamId(userId, teamId);

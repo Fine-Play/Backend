@@ -19,9 +19,6 @@ public interface TeamRequestListRepository extends JpaRepository<TeamRequestList
     // ✅ 특정 팀 가입 요청 삭제 (거절 또는 승인 후)
     void deleteByTeam_TeamIdAndUser_UserId(Long teamId, Long userId);
 
-    // ✅ 특정 팀의 모든 가입 요청 삭제 (팀이 삭제될 경우)
-    void deleteAllByTeam_TeamId(Long teamId);
-
     // ✅ 특정 유저가 이미 해당 팀에 가입 신청했는지 확인
     boolean existsByTeam_TeamIdAndUser_UserId(Long teamId, Long userId);
 
