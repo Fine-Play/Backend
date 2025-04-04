@@ -16,8 +16,8 @@ import org.hibernate.annotations.OnDeleteAction;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity(name="user_stat_Img")
-@Table(name="user_stat_Img")
+@Entity(name="user_stat_img")
+@Table(name="user_stat_img")
 public class UserStatImgEntity {
     @Id
     private Long userId;
@@ -43,4 +43,26 @@ public class UserStatImgEntity {
     private String OFFImg;
     private String TECImg;
     private String COPImg;
+    private String DECImg;
+
+    public UserStatImgEntity(UserEntity user) {
+        this.user = user;
+
+        this.SPDImg = null;
+        this.PASImg = null;
+        this.PACImg = null;
+        this.SHOImg = null;
+        this.DRVImg = null;
+        this.DRIImg = null;
+        this.TACImg = null;
+        this.BLDImg = null;
+        this.CROImg = null;
+        this.HEDImg = null;
+        this.FSTImg = null;
+        this.ACTImg = null;
+        this.OFFImg = null;
+        this.TECImg = null;
+        this.COPImg = null;
+        this.DECImg = null;
+    }
 }

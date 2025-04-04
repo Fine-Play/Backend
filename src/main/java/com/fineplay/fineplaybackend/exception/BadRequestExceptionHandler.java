@@ -31,6 +31,11 @@ public class BadRequestExceptionHandler {
             errorResponse.put("statusCode", 400);
             errorResponse.put("responseMessage", "유효하지 않은 UserId");
         }
+        else if("INVALID_USER_ID_FOR_USER_STAT".equals(reason)) {
+            errorResponse.put("errCode", "INVALID_USER_ID_FOR_USER_STAT");
+            errorResponse.put("statusCode", 400);
+            errorResponse.put("responseMessage", "User Stat에 없는 UserId");
+        }
         else if ("INVALID_SELECTED_STAT".equals(reason)) {
             errorResponse.put("errCode", "INVALID_SELECTED_STAT");
             errorResponse.put("statusCode", 400);

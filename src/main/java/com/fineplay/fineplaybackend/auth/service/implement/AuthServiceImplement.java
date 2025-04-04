@@ -24,12 +24,16 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import com.fineplay.fineplaybackend.user.repository.*;
+import com.fineplay.fineplaybackend.user.entity.*;
 
 @Service
 @RequiredArgsConstructor
 public class AuthServiceImplement implements AuthService {
 
     private final UserRepository userRepository;
+    private final UserStatRepository userStatRepository;
+    private final UserStatImgRepository userStatImgRepository;
     private final JwtProvider jwtProvider;
 //    private final UserProfileRepository userProfileRepository;
 

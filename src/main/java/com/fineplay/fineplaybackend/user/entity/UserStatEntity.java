@@ -12,10 +12,12 @@ import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 @Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity(name="user_stat")
@@ -102,6 +104,7 @@ public class UserStatEntity {
         this.TEC = 0;
         this.COP = 0;
         this.OVR = 0;
+        //this.selectedStat = "CRO";
     }
 
 }
