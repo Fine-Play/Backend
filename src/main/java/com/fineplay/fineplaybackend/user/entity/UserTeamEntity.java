@@ -19,6 +19,7 @@ import org.hibernate.annotations.OnDeleteAction;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 @Entity(name="user_team")
 @Table(name="user_team")
 @IdClass(UserTeamId.class)
